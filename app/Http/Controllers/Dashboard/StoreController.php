@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -12,6 +13,8 @@ class StoreController extends Controller
 {
     public function index()
     {
+        Gate::authorize('view stores');
+
         $stores = Store::paginate();
         return Inertia::render(
             'dashboard/stores/stores.index',
@@ -22,6 +25,8 @@ class StoreController extends Controller
 
     public function create()
     {
+        Gate::authorize('create stores');
+
         $store = new Store();
         return Inertia::render(
             'dashboard/stores/stores.create',
@@ -30,6 +35,8 @@ class StoreController extends Controller
     }
     public function store(Request $request)
     {
+        Gate::authorize('create stores');
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -57,6 +64,8 @@ class StoreController extends Controller
 
     public function edit(Store $store)
     {
+        Gate::authorize('update stores');
+
 
         return Inertia::render(
             'dashboard/stores/stores.edit',
@@ -69,6 +78,8 @@ class StoreController extends Controller
 
     public function update(Request $request, Store $store)
     {
+        Gate::authorize('update stores');
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -88,6 +99,7 @@ class StoreController extends Controller
 
     public function destroy(Store $store)
     {
+        Gate::authorize('delete stores');
 
         $this->deleteOldImage($store);
         $store->delete();

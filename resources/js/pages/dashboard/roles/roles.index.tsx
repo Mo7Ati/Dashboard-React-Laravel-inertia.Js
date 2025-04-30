@@ -1,3 +1,4 @@
+import { usePermissions } from "@/hooks/use-permissions";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
 import { RoleType } from "@/types/dashboard";
@@ -28,7 +29,7 @@ export default function RoleIndex(props: Iprops) {
     const [roles, setStores] = useState<RoleType[]>(props.roles.data);
     const [flashMessage, setFlashMessage] = useState<string>(props.flash.message);
     const [messageApi, contextHolder] = message.useMessage();
-
+    const can = usePermissions();
 
     useEffect(() => {
         if (flashMessage) {
@@ -44,53 +45,71 @@ export default function RoleIndex(props: Iprops) {
     const onPageChange = (page: number, pageSize: number) => {
         router.get(route('dashboard.roles.index'), { page });
     }
-    console.log(roles);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Roles" />
             {contextHolder}
             <div className="rounded-xl p-4">
-                <Button
-                    color="primary"
-                    variant="outlined"
-                    className="mb-2"
-                    onClick={() => router.get(route('dashboard.roles.create'))}
-                >
-                    Add Role
-                </Button>
+                {
+                    can('create roles') && (
+                        <Button
+                            color="primary"
+                            variant="outlined"
+                            className="mb-2"
+                            onClick={() => router.get(route('dashboard.roles.create'))}
+                        >
+                            Add Role
+                        </Button>
+                    )
+                }
+
                 <Table<RoleType> dataSource={roles} rowKey="id" pagination={false} >
 
                     <Column title="Name" dataIndex={'name'} />
 
+                    {
+                        (can('delete roles') && can('update roles')) && (
+                            <Column
+                                title="Action"
+                                render={(_: any, record: RoleType) => (
+                                    <Space size="middle">
+                                        <Flex gap="small">
+                                            {
+                                                can('edit roles') && (
+                                                    <Button
+                                                        color="primary"
+                                                        variant="outlined"
+                                                        onClick={e => {
+                                                            router.get(route('dashboard.roles.edit', record))
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                )
+                                            }
 
-                    <Column
-                        title="Action"
-                        render={(_: any, record: RoleType) => (
-                            <Space size="middle">
-                                <Flex gap="small">
-                                    <Button
-                                        color="primary"
-                                        variant="outlined"
-                                        onClick={e => {
-                                            router.get(route('dashboard.roles.edit', record))
-                                        }}
-                                    >
-                                        Edit
-                                    </Button>
 
-                                    <Button color="danger" variant="outlined" onClick={e => {
-                                        axios.delete(route('dashboard.roles.destroy', record))
-                                            .then(_ => {
-                                                setStores(prev => prev.filter(role => role.id !== record.id));
-                                                setFlashMessage("Role Deleted Successfully");
-                                            });
-                                    }}>
-                                        Delete
-                                    </Button>
-                                </Flex>
-                            </Space>
-                        )}
-                    />
+                                            {
+                                                can('delete roles') && (
+                                                    <Button color="danger" variant="outlined" onClick={e => {
+                                                        axios.delete(route('dashboard.roles.destroy', record))
+                                                            .then(_ => {
+                                                                setStores(prev => prev.filter(role => role.id !== record.id));
+                                                                setFlashMessage("Role Deleted Successfully");
+                                                            });
+                                                    }}>
+                                                        Delete
+                                                    </Button>
+                                                )
+                                            }
+                                        </Flex>
+                                    </Space>
+                                )}
+                            />
+                        )
+                    }
+
                 </Table>
                 <div className="mt-5">
                     <Pagination

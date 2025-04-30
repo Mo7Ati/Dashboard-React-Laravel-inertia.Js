@@ -1,3 +1,4 @@
+import { usePermissions } from "@/hooks/use-permissions";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
 import { StoreType } from "@/types/dashboard";
@@ -28,7 +29,7 @@ export default function StoreIndex(props: Iprops) {
     const [stores, setStores] = useState<StoreType[]>(props.stores.data);
     const [flashMessage, setFlashMessage] = useState<string>(props.flash.message);
     const [messageApi, contextHolder] = message.useMessage();
-
+    const can = usePermissions();
 
     useEffect(() => {
         if (flashMessage) {
@@ -44,20 +45,24 @@ export default function StoreIndex(props: Iprops) {
     const onPageChange = (page: number, pageSize: number) => {
         router.get(route('dashboard.stores.index'), { page });
     }
-    console.log(stores);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Stores" />
             {contextHolder}
+
             <div className="rounded-xl p-4">
-                <Button
-                    color="primary"
-                    variant="outlined"
-                    className="mb-2"
-                    onClick={() => router.get(route('dashboard.stores.create'))}
-                >
-                    Add Store
-                </Button>
+                {
+                    can('create stores') && (
+                        <Button
+                            color="primary"
+                            variant="outlined"
+                            className="mb-2"
+                            onClick={() => router.get(route('dashboard.stores.create'))}
+                        >
+                            Add Store
+                        </Button>
+                    )
+                }
                 <Table<StoreType> dataSource={stores} rowKey="id" pagination={false} >
                     <Column title="Image" render={(_: any, record: StoreType) => (
                         <>
@@ -73,35 +78,47 @@ export default function StoreIndex(props: Iprops) {
                     <Column title="Status" dataIndex="status" />
                     <Column title="Description" dataIndex="description" />
 
-                    <Column
-                        title="Action"
-                        render={(_: any, record: StoreType) => (
-                            <Space size="middle">
-                                <Flex gap="small">
 
-                                    <Button
-                                        color="primary"
-                                        variant="outlined"
-                                        onClick={e => {
-                                            router.get(route('dashboard.stores.edit', record))
-                                        }}
-                                    >
-                                        Edit
-                                    </Button>
+                    {
+                        (can('update stores') || can('delete stores')) && (
+                            <Column
+                                title="Action"
+                                render={(_: any, record: StoreType) => (
+                                    <Space size="middle">
+                                        <Flex gap="small">
+                                            {
+                                                can('update stores') && (
+                                                    <Button
+                                                        color="primary"
+                                                        variant="outlined"
+                                                        onClick={e => {
+                                                            router.get(route('dashboard.stores.edit', record))
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                )
+                                            }
 
-                                    <Button color="danger" variant="outlined" onClick={e => {
-                                        axios.delete(route('dashboard.stores.destroy', record))
-                                            .then(_ => {
-                                                setStores(prev => prev.filter(store => store.id !== record.id));
-                                                setFlashMessage("Store Deleted Successfully");
-                                            });
-                                    }}>
-                                        Delete
-                                    </Button>
-                                </Flex>
-                            </Space>
-                        )}
-                    />
+                                            {
+                                                can('delete stores') && (
+                                                    <Button color="danger" variant="outlined" onClick={e => {
+                                                        axios.delete(route('dashboard.stores.destroy', record))
+                                                            .then(_ => {
+                                                                setStores(prev => prev.filter(store => store.id !== record.id));
+                                                                setFlashMessage("Store Deleted Successfully");
+                                                            });
+                                                    }}>
+                                                        Delete
+                                                    </Button>
+                                                )
+                                            }
+                                        </Flex>
+                                    </Space>
+                                )}
+                            />
+                        )
+                    }
                 </Table>
                 <div className="mt-5">
                     <Pagination

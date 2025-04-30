@@ -7,6 +7,8 @@ use App\Http\Requests\Dashboard\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -17,7 +19,7 @@ class CategoriesController extends Controller
 
     public function index()
     {
-        // Gate::authorize('categories.index');
+        Gate::authorize('view categories');
         $request = request();
         $filters = $request->query();
         $categories = Category::filter($filters)
@@ -25,14 +27,14 @@ class CategoriesController extends Controller
 
         return Inertia::render(
             'dashboard/categories/categories.index',
-            ['categories' => $categories],
+            ['categories' => $categories, 'can' => Auth::user()->can('view categories')],
         );
     }
 
 
     public function create()
     {
-        // Gate::authorize('categories.create');
+        Gate::authorize('create categories');
 
         $category = new Category();
         $parents = Category::all();
@@ -45,6 +47,7 @@ class CategoriesController extends Controller
 
     public function store(CategoryRequest $request)
     {
+        Gate::authorize('create categories');
         $data = $request->except('image');
 
         $data['image'] = $this->storeImage($request);
@@ -63,7 +66,7 @@ class CategoriesController extends Controller
 
     public function edit(Category $category)
     {
-        // Gate::authorize('categories.update');
+        Gate::authorize('update categories');
 
         $parents = Category::
             where('id', '<>', $category->id)
@@ -87,6 +90,7 @@ class CategoriesController extends Controller
 
     public function update(CategoryRequest $request, Category $category)
     {
+        Gate::authorize('update categories');
 
         $data = $request->except('image');
 
@@ -101,7 +105,7 @@ class CategoriesController extends Controller
 
     public function destroy(Category $category)
     {
-        // Gate::authorize('categories.delete');
+        Gate::authorize('delete categories');
 
         $this->deleteOldImage($category);
         $category->delete();

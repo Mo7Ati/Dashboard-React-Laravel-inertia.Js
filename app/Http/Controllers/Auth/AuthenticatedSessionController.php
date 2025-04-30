@@ -22,8 +22,8 @@ class AuthenticatedSessionController extends Controller
             'canResetPassword' => Route::has('password.request'),
             'status' => $request->session()->get('status'),
         ]);
-    }
 
+    }
     /**
      * Handle an incoming authentication request.
      */

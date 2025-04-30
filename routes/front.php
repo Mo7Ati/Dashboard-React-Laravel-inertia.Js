@@ -6,7 +6,6 @@ use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\front\paymentsController;
 use App\Http\Controllers\Front\ProductController;
-use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 
 

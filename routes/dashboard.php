@@ -8,13 +8,18 @@ use App\Http\Controllers\Dashboard\StoreController;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Middleware\MarkNotificationAsRead;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
+Route::middleware(['auth:admin', 'verified'])->group(function () {
+    Route::get('admin/dashboard', function () {
+        return Inertia::render('dashboard');
+    })->name('dashboard');
+});
 
 Route::group([
-    'middleware' => 'auth',
-    'prefix' => '/dashboard',
+    'middleware' => 'auth:admin',
+    'prefix' => 'admin/dashboard',
     'as' => 'dashboard.'
-
 ], function () {
 
     Route::resources([

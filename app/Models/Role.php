@@ -38,22 +38,14 @@ class Role extends Model
 
     public function abilities()
     {
-        return $this->hasMany(RoleAbility::class);
-
-        //$abilities = RoleAbility::where('role_id', $this->id)
-        //   ->where('type', 'allow')->pluck('ability')->toArray();
-
-        // return implode('/', $abilities);
-
+        return $this->hasMany(RoleAbility::class)->orderBy('id');
     }
 
     public function hasAbility($ability)
     {
-
         $result = $this->abilities()
             ->where('ability', $ability)->first();
         return $result ? $result->type : "";
-
     }
 
 

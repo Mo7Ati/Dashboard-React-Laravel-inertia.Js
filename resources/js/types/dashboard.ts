@@ -2,6 +2,10 @@ export enum EStatus {
     ACTIVE = 'active',
     ARCHIVED = 'archived',
 }
+export enum EAbilityType {
+    ALLOW = 'allow',
+    DENY = 'deny',
+}
 
 export type CategoryType = {
     id: number;
@@ -55,12 +59,28 @@ export type RoleType = {
     id: number;
     name: string;
     abilities: AbilityType[];
-    _method: 'PUT' | 'POST';
-
 }
+
 export type AbilityType = {
-    ability: string;
-    value: any;
+    id?: number;
+    ability?: string;
+    name: string;
+    type: EAbilityType;
 }
 
+export enum EForm {
+    CREATE = 'create',
+    EDIT = 'edit',
+}
 
+export type AdminType = {
+    id: number;
+    name: string;
+    username: string;
+    phone_number: number;
+    email: string;
+    status: EStatus;
+    password: any;
+    super_admin: boolean;
+    roles: RoleType[];
+}

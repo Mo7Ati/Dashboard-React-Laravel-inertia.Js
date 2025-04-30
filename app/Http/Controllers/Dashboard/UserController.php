@@ -14,8 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate() ;
-        return view('dashboard.users.index' , ['users' => $users]) ;
+        $users = User::paginate();
+        return view('dashboard.users.index', ['users' => $users]);
     }
 
     /**
@@ -23,8 +23,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $user = new User() ;
-        return view('dashboard.users.create' , compact('user'));
+        $user = new User();
+        return view('dashboard.users.create', compact('user'));
     }
 
     /**
@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('dashboard.users.edit' , compact('user')) ;
+        return view('dashboard.users.edit', compact('user'));
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('dashboard.users.index')
-        ->with('success', 'User Deleted Successfully');
+            ->with('success', 'User Deleted Successfully');
 
     }
 }

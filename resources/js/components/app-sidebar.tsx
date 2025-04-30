@@ -11,32 +11,32 @@ import AppLogo from './app-logo';
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        url: '/dashboard',
+        url: route('dashboard'),
         icon: LayoutGrid,
     },
     {
         title: 'Categories',
-        url: '/dashboard/categories',
+        url: route('dashboard.categories.index'),
         icon: LayoutGrid,
     },
     {
         title: 'Stores',
-        url: '/dashboard/stores',
+        url: route('dashboard.stores.index'),
         icon: LayoutGrid,
     },
     {
         title: 'Products',
-        url: '/dashboard/products',
+        url: route('dashboard.products.index'),
         icon: LayoutGrid,
     },
     {
         title: 'Admins',
-        url: '/dashboard/admins',
+        url: route('dashboard.admins.index'),
         icon: LayoutGrid,
     },
     {
         title: 'Roles',
-        url: '/dashboard/roles',
+        url: route('dashboard.roles.index'),
         icon: LayoutGrid,
     },
 ];

@@ -10,6 +10,7 @@ use App\Models\Store;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -20,6 +21,7 @@ class ProductController extends Controller
 
     public function index()
     {
+        Gate::authorize('view products');
         $products = Product::with('Category:name,id', 'Store:name,id')->paginate(5);
         return Inertia::render(
             'dashboard/products/products.index',
@@ -31,6 +33,8 @@ class ProductController extends Controller
     }
     public function create()
     {
+        Gate::authorize('create products');
+
         $product = new Product();
         $categories = Category::all();
         $stores = Store::all();
@@ -49,6 +53,8 @@ class ProductController extends Controller
 
     public function store(ProductsRequest $request)
     {
+        Gate::authorize('create products');
+
         $data = $request->except(['image', 'tags']);
 
         $data['image'] = $this->storeImage($request);
@@ -71,6 +77,8 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
+        Gate::authorize('update products');
+
         $categories = Category::all();
         $stores = Store::all();
         $tags = Tag::all();
@@ -90,6 +98,8 @@ class ProductController extends Controller
 
     public function update(ProductsRequest $request, Product $product)
     {
+        Gate::authorize('update products');
+
         $data = $request->except('image', 'tags');
 
         $data['image'] = $this->storeImage($request, $product);
@@ -105,6 +115,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        Gate::authorize('delete products');
+
         $this->deleteOldImage($product);
         $product->delete();
     }
