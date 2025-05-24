@@ -35,7 +35,7 @@ This is a multi-vendor e-commerce platform built using **Laravel**, **React.js**
 
 5. **Run migrations**
    ```bash
-   php artisan migrate
+   php artisan migrate --seed
    ```
 
 6. **Run the development server**
